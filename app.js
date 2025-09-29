@@ -4,32 +4,42 @@ const GameBoard = (function(){
                      ["","",""]];
 
     const printBoard = function(){
-        for (let i = 0; i < 1; i++) {
-            for (let j = 0; j < gameBoard.length; j++ ) {
-                console.log(gameBoard[j].join(" "));
-            }
+        for (let j = 0; j < gameBoard.length; j++ ) {
+            console.log(gameBoard[j].join(" "));
         }
+        
     }
 
-    const insertMove = function(){
-        //write logic here
-    }
+    
 
-    return {}
+    return {printBoard}
 })();
 
 const Players = (function(){
     const player1 = {
-        name: "player1",
-        moves: true,
+        name: "player 1",
+        token: 1,
     }
 
     const player2 = {
-        name: "player2",
-        moves: false,
+        name: "player 2",
+        token: 2,
     }
 
-    return {}
+    const players = [player1, player2];
+    let activePlayer = players[0];
+    const getActivePlayer = () => activePlayer;
+    const switchPlayer = () => {
+        if (activePlayer === players[0]) {
+            activePlayer = players[1];
+        }else(
+            activePlayer = players[0]
+        )
+        
+        return activePlayer;
+    }
+
+    return {getActivePlayer, switchPlayer}
 })();
 
 const GameFlow = (function(){
