@@ -10,9 +10,12 @@ const GameBoard = (function(){
         
     }
 
-    
+    const getGameBoard = () => gameBoard;
+    const insertMove = (row, column, token) => {
 
-    return {printBoard}
+    }
+
+    return {printBoard, getGameBoard}
 })();
 
 const Players = (function(){
@@ -43,6 +46,16 @@ const Players = (function(){
 })();
 
 const GameFlow = (function(){
+
+    const startGame = () => {
+    
+    }
+
+    
+
+    const playRound = () => {
+
+    }
 
 
 })();
