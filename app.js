@@ -3,6 +3,12 @@ const GameBoard = (function(){
                      ["","",""],
                      ["","",""]];
 
+    let numberOfMoves = 9;
+
+    const getNumberOfMoves = () => {
+        return numberOfMoves;
+    }
+
     const printBoard = function(){
         for (let j = 0; j < gameBoard.length; j++ ) {
             console.log(gameBoard[j].join(" "));
@@ -14,15 +20,16 @@ const GameBoard = (function(){
 
     const playMove = (row, column, token) => {
         if(gameBoard[row][column] === ""){
+            numberOfMoves--;
             gameBoard[row][column] = token;
             return true;
         }else{
-            console.log("Position has already been chosen. Choose another position");
+            console.log("Invalid position. Choose another position");
             return false;
         }
     }
 
-    return {printBoard, getGameBoard, playMove}
+    return {printBoard, getGameBoard, playMove, getNumberOfMoves}
 })();
 
 const Players = (function(){
@@ -56,13 +63,15 @@ const GameFlow = (function(){
 
     const startGame = () => {
         console.log("Game Started!");
-        playRound(0,0);
-        playRound(0,1);
-        playRound(0,2);
-        playRound(1,0);
         playRound(1,1);
-        playRound(1,2);
+        playRound(0,0);
+        playRound(0,2);
         playRound(2,0);
+        playRound(1,0);
+        playRound(1,2);
+        playRound(0,1);
+        playRound(2,1);
+        playRound(2,2);
     }
 
 
@@ -94,7 +103,7 @@ const GameFlow = (function(){
             if(gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i]
                 && gameBoard[0][i] !== ""){
                     console.log(`${playerName} wins`);
-                }
+            }
         }
 
         //for diagonals
@@ -105,8 +114,11 @@ const GameFlow = (function(){
              && gameBoard[0][2] !== ""){
                 console.log(`${playerName} wins`);
         }
-        
 
+        if (GameBoard.getNumberOfMoves() === 0) {
+            console.log("It's a tie");
+        }
+        
     }
 
     return {startGame}
