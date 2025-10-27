@@ -1,0 +1,26 @@
+.container{
+    max-width: 1200px;
+    height: 100vb;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    justify-items: center;
+}
+.square{
+    height: 200px;
+    width: 200px;
+    background-color: black;
+    border: 3px solid white;
+    padding: 10px;
+}
+
+.square:hover{
+    cursor: pointer;
+    background-color:darkgrey;
+}
