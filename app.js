@@ -9,12 +9,6 @@ const GameBoard = (function(){
         return numberOfMoves;
     }
 
-    const printBoard = function(){
-        for (let j = 0; j < gameBoard.length; j++ ) {
-            console.log(gameBoard[j].join(" "));
-        }
-        
-    }
 
     const getGameBoard = () => gameBoard;
 
@@ -29,7 +23,7 @@ const GameBoard = (function(){
         }
     }
 
-    return {printBoard, getGameBoard, playMove, getNumberOfMoves}
+    return {getGameBoard, playMove, getNumberOfMoves}
 })();
 
 const Players = (function(){
@@ -62,30 +56,12 @@ const Players = (function(){
 const GameFlow = (function(){
 
     const startGame = () => {
-        console.log("Game Started!");
-        playRound(1,1);
-        playRound(0,0);
-        playRound(0,2);
-        playRound(2,0);
-        playRound(1,0);
-        playRound(1,2);
-        playRound(0,1);
-        playRound(2,1);
-        playRound(2,2);
+        UI.drawBoard();
     }
 
 
     const playRound = (row,column) => {
-        const token =  Players.getActivePlayer().token;
-        const playerName = Players.getActivePlayer().name;
-        console.log(`${playerName} plays`);
-        if(GameBoard.playMove(row, column, token)){
-            checkWin(playerName);
-            Players.switchPlayer();
-            GameBoard.printBoard();
-        }else{
-            console.log("Invalid round!");
-        }
+        
     }
 
     const checkWin = (playerName) => {
@@ -121,8 +97,50 @@ const GameFlow = (function(){
         
     }
 
-    return {startGame}
+    return {startGame, checkWin}
 
 })();
 
+const UI = (function(){
+    const drawBoard = function(){
+        const board = GameBoard.getGameBoard();
+        const gameBoardContainer = document.querySelector(".board");
+        gameBoardContainer.textContent = "";
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                const square = document.createElement("DIV");
+                square.classList.add("square");
+                square.dataset.row = i;
+                square.dataset.column = j;
+                gameBoardContainer.appendChild(square);
+            }
+        }
+    }
+
+    const playerMoveHandler = function(){
+        const squares = document.querySelectorAll(".square");
+        const token =  Players.getActivePlayer().token;
+        const playerName = Players.getActivePlayer().name;
+        let row = null;
+        let column = null;
+        squares.forEach(square => {
+            square.addEventListener("click", (e)=> {
+                row = e.target.dataset.row;
+                column = e.target.dataset.column;
+                if(GameBoard.playMove(row, column, token)){
+                    square.textContent = token;
+                    GameFlow.checkWin(playerName);
+                    Players.switchPlayer();
+                    
+                }else{
+                    console.log("Invalid round!");
+                }
+            })
+        });
+    }
+
+    return {drawBoard, playerMoveHandler}
+})();
+
 GameFlow.startGame();
+UI.playerMoveHandler();
