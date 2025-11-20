@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 
 .board{
@@ -15,12 +16,24 @@
 .square{
     height: 200px;
     width: 200px;
-    background-color: black;
+    background-color: darkgrey;
     border: 3px solid white;
     padding: 10px;
+    color: #fff;
+    font-size: 150px;
+    font-family: sans-serif;
+    text-align: center;
+}
+.square.black{
+    background-color: black;
 }
 
-.square:hover{
+.square.black:hover{
     cursor: pointer;
     background-color:darkgrey;
+}
+
+.button{
+    margin-top: 20px;
+    padding: 10px 30px;
 }

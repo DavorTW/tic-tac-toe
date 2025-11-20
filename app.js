@@ -40,6 +40,7 @@ const Players = (function(){
     const players = [player1, player2];
     let activePlayer = players[0];
     const getActivePlayer = () => activePlayer;
+
     const switchPlayer = () => {
         if (activePlayer === players[0]) {
             activePlayer = players[1];
@@ -57,12 +58,9 @@ const GameFlow = (function(){
 
     const startGame = () => {
         UI.drawBoard();
+        UI.startButton();
     }
 
-
-    const playRound = (row,column) => {
-        
-    }
 
     const checkWin = (playerName) => {
         const gameBoard = GameBoard.getGameBoard();
@@ -119,28 +117,37 @@ const UI = (function(){
 
     const playerMoveHandler = function(){
         const squares = document.querySelectorAll(".square");
-        const token =  Players.getActivePlayer().token;
-        const playerName = Players.getActivePlayer().name;
-        let row = null;
-        let column = null;
+
         squares.forEach(square => {
             square.addEventListener("click", (e)=> {
-                row = e.target.dataset.row;
-                column = e.target.dataset.column;
+                const row = +e.target.dataset.row;
+                const column = +e.target.dataset.column;
+
+                const token =  Players.getActivePlayer().token;
+                const playerName = Players.getActivePlayer().name;
+
                 if(GameBoard.playMove(row, column, token)){
                     square.textContent = token;
                     GameFlow.checkWin(playerName);
-                    Players.switchPlayer();
-                    
-                }else{
-                    console.log("Invalid round!");
+                    Players.switchPlayer(); 
                 }
             })
         });
     }
 
-    return {drawBoard, playerMoveHandler}
+    const startButton = function(){
+        const startButton = document.querySelector(".start");
+        const squares = document.querySelectorAll(".square");
+        
+        startButton.addEventListener("click", ()=>{
+            squares.forEach(square => {
+                square.classList.add("black");
+            });
+            playerMoveHandler();
+        })
+    }
+
+    return {drawBoard, playerMoveHandler, startButton}
 })();
 
 GameFlow.startGame();
-UI.playerMoveHandler();
