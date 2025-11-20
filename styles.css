@@ -16,7 +16,7 @@
 .square{
     height: 200px;
     width: 200px;
-    background-color: darkgrey;
+    background-color: black;
     border: 3px solid white;
     padding: 10px;
     color: #fff;
@@ -24,11 +24,9 @@
     font-family: sans-serif;
     text-align: center;
 }
-.square.black{
-    background-color: black;
-}
 
-.square.black:hover{
+
+.square:hover{
     cursor: pointer;
     background-color:darkgrey;
 }
@@ -36,4 +34,11 @@
 .button{
     margin-top: 20px;
     padding: 10px 30px;
+}
+
+.disabled {
+    pointer-events: none;
+    background-color: gray;
+    cursor: default;
+    opacity: 0.6;
 }

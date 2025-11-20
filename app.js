@@ -61,7 +61,6 @@ const GameFlow = (function(){
         UI.startButton();
     }
 
-
     const checkWin = (playerName) => {
         const gameBoard = GameBoard.getGameBoard();
         //for rows
@@ -69,6 +68,7 @@ const GameFlow = (function(){
             if(gameBoard[i][0] === gameBoard[i][1] && gameBoard[i][1] === gameBoard[i][2]
                  && gameBoard[i][0] != ""){
                 console.log(`${playerName} wins`);
+                return true
             }
         }
 
@@ -77,6 +77,7 @@ const GameFlow = (function(){
             if(gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i]
                 && gameBoard[0][i] !== ""){
                     console.log(`${playerName} wins`);
+                    return true;
             }
         }
 
@@ -84,13 +85,17 @@ const GameFlow = (function(){
         if(gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2]
              && gameBoard[0][0] !== ""){
                 console.log(`${playerName} wins`);
+                return true
+
         }else if(gameBoard[0][2] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][0]
              && gameBoard[0][2] !== ""){
                 console.log(`${playerName} wins`);
+                return true
         }
 
         if (GameBoard.getNumberOfMoves() === 0) {
             console.log("It's a tie");
+            return true;
         }
         
     }
@@ -100,6 +105,7 @@ const GameFlow = (function(){
 })();
 
 const UI = (function(){
+
     const drawBoard = function(){
         const board = GameBoard.getGameBoard();
         const gameBoardContainer = document.querySelector(".board");
@@ -108,6 +114,7 @@ const UI = (function(){
             for (let j = 0; j < board.length; j++) {
                 const square = document.createElement("DIV");
                 square.classList.add("square");
+                square.classList.add("disabled");
                 square.dataset.row = i;
                 square.dataset.column = j;
                 gameBoardContainer.appendChild(square);
@@ -115,23 +122,31 @@ const UI = (function(){
         }
     }
 
-    const playerMoveHandler = function(){
+    const playerMoveHandler = function () {
         const squares = document.querySelectorAll(".square");
+        let gameOverStatus = false;
+        squares.forEach((square) => {
+                square.addEventListener("click", (e) => {
 
-        squares.forEach(square => {
-            square.addEventListener("click", (e)=> {
-                const row = +e.target.dataset.row;
-                const column = +e.target.dataset.column;
+                    if (gameOverStatus) {
+                        return;
+                    }
 
-                const token =  Players.getActivePlayer().token;
-                const playerName = Players.getActivePlayer().name;
+                    const row = +e.target.dataset.row;
+                    const column = +e.target.dataset.column;
 
-                if(GameBoard.playMove(row, column, token)){
-                    square.textContent = token;
-                    GameFlow.checkWin(playerName);
-                    Players.switchPlayer(); 
-                }
-            })
+                    const token = Players.getActivePlayer().token;
+                    const playerName = Players.getActivePlayer().name;
+                    if (GameBoard.playMove(row, column, token)) {
+                        square.textContent = token;
+                        if (GameFlow.checkWin(playerName)) {
+                            gameOverStatus = true;
+                            UI.disableBoard();
+                        }
+                        Players.switchPlayer();
+                    }
+                });
+            
         });
     }
 
@@ -141,13 +156,21 @@ const UI = (function(){
         
         startButton.addEventListener("click", ()=>{
             squares.forEach(square => {
-                square.classList.add("black");
+                square.classList.remove("disabled");
             });
             playerMoveHandler();
         })
     }
 
-    return {drawBoard, playerMoveHandler, startButton}
+    const disableBoard = function(){
+        const squares = document.querySelectorAll(".square");
+        squares.forEach(square => {
+            square.classList.add("disabled");
+        })
+    }
+        
+
+    return {drawBoard, playerMoveHandler, startButton, disableBoard}
 })();
 
 GameFlow.startGame();
