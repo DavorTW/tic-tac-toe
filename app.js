@@ -9,6 +9,10 @@ const GameBoard = (function(){
         return numberOfMoves;
     }
 
+    const resetNumberOfMoves = () => {
+        numberOfMoves = 9;
+    }
+
 
     const getGameBoard = () => gameBoard;
 
@@ -18,12 +22,11 @@ const GameBoard = (function(){
             gameBoard[row][column] = token;
             return true;
         }else{
-            console.log("Invalid position. Choose another position");
             return false;
         }
     }
 
-    return {getGameBoard, playMove, getNumberOfMoves}
+    return {getGameBoard, playMove, getNumberOfMoves, resetNumberOfMoves}
 })();
 
 const Players = (function(){
@@ -41,6 +44,10 @@ const Players = (function(){
     let activePlayer = players[0];
     const getActivePlayer = () => activePlayer;
 
+    const resetActivePlayer = function() {
+        activePlayer = players[0];
+    }
+
     const switchPlayer = () => {
         if (activePlayer === players[0]) {
             activePlayer = players[1];
@@ -51,7 +58,7 @@ const Players = (function(){
         return activePlayer;
     }
 
-    return {getActivePlayer, switchPlayer}
+    return {getActivePlayer, switchPlayer, resetActivePlayer}
 })();
 
 const GameFlow = (function(){
@@ -59,6 +66,7 @@ const GameFlow = (function(){
     const startGame = () => {
         UI.drawBoard();
         UI.startButton();
+        UI.restarGame();
     }
 
     const checkWin = (playerName) => {
@@ -67,7 +75,7 @@ const GameFlow = (function(){
         for(let i = 0; i < gameBoard.length; i++){
             if(gameBoard[i][0] === gameBoard[i][1] && gameBoard[i][1] === gameBoard[i][2]
                  && gameBoard[i][0] != ""){
-                console.log(`${playerName} wins`);
+                UI.showWinner(playerName);
                 return true
             }
         }
@@ -76,7 +84,7 @@ const GameFlow = (function(){
         for(let i = 0; i < gameBoard.length; i++){
             if(gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i]
                 && gameBoard[0][i] !== ""){
-                    console.log(`${playerName} wins`);
+                    UI.showWinner(playerName);
                     return true;
             }
         }
@@ -84,12 +92,12 @@ const GameFlow = (function(){
         //for diagonals
         if(gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2]
              && gameBoard[0][0] !== ""){
-                console.log(`${playerName} wins`);
+                UI.showWinner(playerName);
                 return true
 
         }else if(gameBoard[0][2] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][0]
              && gameBoard[0][2] !== ""){
-                console.log(`${playerName} wins`);
+                UI.showWinner(playerName);
                 return true
         }
 
@@ -100,7 +108,17 @@ const GameFlow = (function(){
         
     }
 
-    return {startGame, checkWin}
+    const resetBoard = function(){
+        const board = GameBoard.getGameBoard();
+        for (let i = 0; i < board.length; i++) {
+            for(let j = 0; j < board.length; j++){
+                board[i][j] = "";
+            }
+            
+        }
+    }
+
+    return {startGame, checkWin, resetBoard}
 
 })();
 
@@ -120,6 +138,7 @@ const UI = (function(){
                 gameBoardContainer.appendChild(square);
             }
         }
+        UI.playerMoveHandler();
     }
 
     const playerMoveHandler = function () {
@@ -158,7 +177,35 @@ const UI = (function(){
             squares.forEach(square => {
                 square.classList.remove("disabled");
             });
-            playerMoveHandler();
+        })
+    }
+
+    const clearSquares = function(){
+        const squares = document.querySelectorAll(".square");
+        squares.forEach(square => {
+            if (square.classList.contains("disabled")) {
+                square.classList.remove("disabled");
+            }
+            square.textContent = "";
+        })
+        UI.playerMoveHandler();
+    }
+
+    const removeWinnerText = function(){
+        const winner = document.querySelector(".winner");
+        if(winner){
+            winner.remove();
+        }
+    }
+
+    const restarGame = function() {
+        const restartButton = document.querySelector(".restart");
+        restartButton.addEventListener("click", ()=>{
+            GameFlow.resetBoard();
+            GameBoard.resetNumberOfMoves();
+            Players.resetActivePlayer();
+            UI.clearSquares();
+            UI.removeWinnerText();
         })
     }
 
@@ -168,9 +215,17 @@ const UI = (function(){
             square.classList.add("disabled");
         })
     }
+
+    const showWinner = function(playerName){
+        const container = document.querySelector(".container");
+        const winnerText = document.createElement("p");
+        winnerText.classList.add("winner");
+        winnerText.textContent = `${playerName} wins!`;
+        container.appendChild(winnerText);
+    }
         
 
-    return {drawBoard, playerMoveHandler, startButton, disableBoard}
+    return {drawBoard, playerMoveHandler, startButton, disableBoard, clearSquares, restarGame, showWinner,removeWinnerText}
 })();
 
 GameFlow.startGame();
