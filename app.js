@@ -31,12 +31,12 @@ const GameBoard = (function(){
 
 const Players = (function(){
     const player1 = {
-        name: "player 1",
+        name: "Player 1",
         token: "X",
     }
 
     const player2 = {
-        name: "player 2",
+        name: "Player 2",
         token: "O",
     }
 
@@ -174,6 +174,13 @@ const UI = (function(){
         const squares = document.querySelectorAll(".square");
         
         startButton.addEventListener("click", ()=>{
+
+            GameFlow.resetBoard();
+            UI.clearSquares();
+            GameBoard.resetNumberOfMoves();
+            Players.resetActivePlayer();
+            UI.removeWinnerText();
+
             squares.forEach(square => {
                 square.classList.remove("disabled");
             });
